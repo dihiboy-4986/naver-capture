@@ -1,3 +1,5 @@
 #!/bin/bash
-apt-get install -y fonts-nanum
+apt-get update
+apt-get install -y fonts-nanum fonts-nanum-coding fonts-nanum-extra
+fc-cache -fv
 playwright install chromium
