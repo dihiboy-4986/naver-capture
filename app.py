@@ -65,21 +65,21 @@ def capture():
 
     with sync_playwright() as p:
         # PC 캡처
-        browser = p.chromium.launch()
+        browser = p.chromium.launch(args=['--font-render-hinting=none'])
         page = browser.new_page(viewport={'width': 1280, 'height': 900})
-        page.goto(url, wait_until='networkidle')
-        page.wait_for_timeout(2000)
-        screenshots['PC'] = page.screenshot(full_page=False)
+        page.goto(url, wait_until='domcontentloaded', timeout=60000)
+        page.wait_for_timeout(3000)
+        screenshots['PC'] = page.screenshot(full_page=False, timeout=60000)
         browser.close()
 
         # 모바일 캡처
-        browser = p.chromium.launch()
+        browser = p.chromium.launch(args=['--font-render-hinting=none'])
         page = browser.new_page(
             viewport={'width': 390, 'height': 844},
             user_agent='Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1'
         )
-        page.goto(url, wait_until='networkidle')
-        page.wait_for_timeout(2000)
+        page.goto(url, wait_until='domcontentloaded', timeout=60000)
+        page.wait_for_timeout(3000)
 
         # 브랜드 광고 안의 탭 버튼 찾기
         tabs = page.locator('.bottom_tab_button').all()
@@ -89,12 +89,11 @@ def capture():
                 try:
                     tab.click()
                     page.wait_for_timeout(1500)
-                    screenshots[f'모바일_탭{i+1}'] = page.screenshot(full_page=False)
+                    screenshots[f'모바일_탭{i+1}'] = page.screenshot(full_page=False, timeout=60000)
                 except:
                     pass
         else:
-            # 탭이 없으면 그냥 1장
-            screenshots['모바일'] = page.screenshot(full_page=False)
+            screenshots['모바일'] = page.screenshot(full_page=False, timeout=60000)
 
         browser.close()
 
